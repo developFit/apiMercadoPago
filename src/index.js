@@ -1,10 +1,13 @@
 import express from "express";
+import morgan from "morgan";
 import paymentRoutes from "./routes/payment.routes.js";
-
-const PORT = 3000;
+import { PORT } from "./config.js";
 
 // inicializamos el servidor
 const app = express();
+
+// visualiza las peticiones HTTP en la consola
+app.use(morgan("dev"));
 
 app.use(paymentRoutes);
 
