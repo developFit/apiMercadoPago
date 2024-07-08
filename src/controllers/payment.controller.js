@@ -1,4 +1,5 @@
 import { Payment, MercadoPagoConfig } from "mercadopago";
+import { MERCADOPAGO_ACCESS_TOKEN } from "../config.js"; 
 
 const client = new MercadoPagoConfig({
   accessToken: MERCADOPAGO_ACCESS_TOKEN,
