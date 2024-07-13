@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+  </head>
+  <body>
+    <!-- <button id="checkout">Pay</button>
+
+    
+    <script>
+       const checkoutButton = document.getElementById("checkout");
+
+      checkoutButton.addEventListener("click", async () => {
+        const res = await fetch("http://localhost:3000/api/create-order", {
+          method: "POST",
+        });
+        const data = await res.json();
+        window.location.href = data.init_point;
+      }); 
+    </script> -->
+
+    <!-- <style>
+    #form-checkout {
+      display: flex;
+      flex-direction: column;
+      max-width: 600px;
+    }
+
+    .container {
+      height: 18px;
+      display: inline-block;
+      border: 1px solid rgb(118, 118, 118);
+      border-radius: 2px;
+      padding: 1px 2px;
+    }
+  </style> -->
+    <!-- <form id="form-checkout">
+    <div id="form-checkout__cardNumber" class="container"></div>
+    <div id="form-checkout__expirationDate" class="container"></div>
+    <div id="form-checkout__securityCode" class="container"></div>
+    <input type="text" id="form-checkout__cardholderName" />
+    <select id="form-checkout__issuer"></select>
+    <select id="form-checkout__installments"></select>
+    <select id="form-checkout__identificationType"></select>
+    <input type="text" id="form-checkout__identificationNumber" />
+    <input type="email" id="form-checkout__cardholderEmail" />
+
+    <button type="submit" id="form-checkout__submit">Pagar</button>
+    <progress value="0" class="progress-bar">Cargando...</progress>
+  </form> -->
+
+    <!-- <script>
+  const mp = new MercadoPago("TEST-d1a350ec-d71b-4395-9071-f4ed0b7ac15f");
+</script> -->
+
+    <!-- <script src="https://sdk.mercadopago.com/js/v2"></script> -->
+
+    <form id="paymentForm">
+      <!-- <input type="text" id="title" placeholder="Title" />
+      <input type="text" id="description" placeholder="Description" />
+      <input type="text" id="quantity" placeholder="Quantity" />
+      <input type="text" id="unitPrice" placeholder="Unit Price" /> -->
+      <input type="text" id="cardNumber" placeholder="Card Number" />
+      <input type="text" id="cardExpirationDate" placeholder="MM/YY" />
+      <input type="text" id="cardholderName" placeholder="Cardholder Name" />
+      <input type="text" id="securityCode" placeholder="Security Code" />
+      <input type="email" id="email" placeholder="email" />
+      <input
+        type="text"
+        id="identificationType"
+        placeholder="Identification Type (e.g., DNI)"
+      />
+      <input
+        type="text"
+        id="identificationNumber"
+        placeholder="Identification Number"
+      />
+      <select id="installments">
+        <option value="1">1</option>
+        <option value="3">3</option>
+        <option value="6">6</option>
+      </select>
+      <select id="issuer">
+        <option value="1">visa</option>
+        <option value="2">amex</option>
+        <option value="3">master</option>
+      </select>
+      <button type="submit">Pay</button>
+    </form>
+
+    <script>
+      const mp = new MercadoPago("TEST-d1a350ec-d71b-4395-9071-f4ed0b7ac15f");
+
+      const cardForm = mp.cardForm({
+        amount: "100.00",
+        autoMount: true,
+        form: {
+          id: "paymentForm",
+          /* title: {
+            id: "title",
+            placeholder: "Title",
+          },
+          description: {
+            id: "description",
+            placeholder: "Description",
+          },
+          quantity: {
+            id: "quantity",
+            placeholder: "Quantity",
+          },
+          unitPrice: {
+            id: "unitPrice",
+            placeholder: "Unit Price",
+          }, */
+          cardNumber: {
+            id: "cardNumber",
+            placeholder: "Card Number",
+          },
+          expirationDate: {
+            id: "cardExpirationDate",
+            placeholder: "MM/YY",
+          },
+          securityCode: {
+            id: "securityCode",
+            placeholder: "Security Code",
+          },
+          cardholderName: {
+            id: "cardholderName",
+            placeholder: "Cardholder Name",
+          },
+          email: {
+            id: "email",
+            placeholder: "Email",
+          },
+          identificationType: {
+            id: "identificationType",
+            placeholder: "Identification Type",
+          },
+          identificationNumber: {
+            id: "identificationNumber",
+            placeholder: "Identification Number",
+          },
+          installments: {
+            id: "installments",
+            placeholder: "Installments",
+          },
+          issuer: {
+            id: "issuer",
+            placeholder: "issuer",
+          },
+        },
+        callbacks: {
+          onFormMounted: (error) => {
+            if (error)
+              return console.warn("Form Mounted handling error: ", error);
+            console.log("Form mounted");
+          },
+          onSubmit: (event) => {
+            event.preventDefault();
+            const {
+              token,
+              /* title,
+              description,
+              quantity,
+              unitPrice, */
+              transactionAmount,
+              installments,
+              paymentMethodId,
+              email,
+              identificationType,
+              identificationNumber,
+              issuer,
+            } = cardForm.getCardFormData();
+            console.log("Token: ", token);
+            fetch("http://localhost:3000/create-order", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                token,
+                //title,
+                //description,
+                //quantity,
+                //unit_price: unitPrice,
+                transaction_amount: 101,
+                installments: Number(installments) || 1,
+                payment_method_id: "master",
+                //email: email,
+                //identification_type: identificationType,
+                //identification_number: identificationNumber,
+                issuer,
+                payer: {
+                  email: email,
+                  identification: {
+                    type: identificationType,
+                    number: identificationNumber,
+                    /* additional_info: {
+                      items: [
+                        {
+                          title,
+                          description,
+                          quantity,
+                          unitPrice,
+                        },
+                      ],
+                    }, */
+                    },
+                },
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => console.log("Payment Result:", data))
+              .catch((error) => console.error("Error:", error));
+          } /* ,
+                onFetching: (resource) => {
+                    console.log("Fetching resource: ", resource);
+                } */,
+        },
+      });
+    </script>
+  </body>
+</html>
