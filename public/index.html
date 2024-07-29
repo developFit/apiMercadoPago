@@ -78,16 +78,13 @@
         id="identificationNumber"
         placeholder="Identification Number"
       />
-      <select id="installments">
-        <option value="1">1</option>
-        <option value="3">3</option>
-        <option value="6">6</option>
+      <select id="paymentMethodId">
+        <option value="visa">Visa</option>
+        <option value="amex">American Express</option>
+        <option value="master">Master Card</option>
       </select>
-      <select id="issuer">
-        <option value="1">visa</option>
-        <option value="2">amex</option>
-        <option value="3">master</option>
-      </select>
+      <select id="issuer"></select>
+      <select id="installments"></select>
       <button type="submit">Pay</button>
     </form>
 
@@ -131,7 +128,7 @@
             id: "cardholderName",
             placeholder: "Cardholder Name",
           },
-          email: {
+          cardholderEmail: {
             id: "email",
             placeholder: "Email",
           },
@@ -143,13 +140,17 @@
             id: "identificationNumber",
             placeholder: "Identification Number",
           },
-          installments: {
-            id: "installments",
-            placeholder: "Installments",
+          paymentMethodId: {
+            id: "paymentMethodId",
+            //placeholder: "Payment Method Id",
           },
           issuer: {
             id: "issuer",
             placeholder: "issuer",
+          },
+          installments: {
+            id: "installments",
+            placeholder: "Installments",
           },
         },
         callbacks: {
@@ -166,15 +167,19 @@
               description,
               quantity,
               unitPrice, */
-              transactionAmount,
+              amount,
               installments,
               paymentMethodId,
-              email,
+              cardholderEmail,
               identificationType,
               identificationNumber,
-              issuer,
+              issuerId,
             } = cardForm.getCardFormData();
             console.log("Token: ", token);
+            console.log(
+              "cardForm.getCardFormData()",
+              cardForm.getCardFormData()
+            );
             fetch("http://localhost:3000/api/create-order", {
               method: "POST",
               headers: {
@@ -186,15 +191,15 @@
                 //description,
                 //quantity,
                 //unit_price: unitPrice,
-                transaction_amount: 101,
+                transaction_amount: Number(amount),
                 installments: Number(installments) || 1,
-                payment_method_id: "master",
+                payment_method_id: paymentMethodId,
                 //email: email,
                 //identification_type: identificationType,
                 //identification_number: identificationNumber,
-                issuer,
+                issuer_id: issuerId,
                 payer: {
-                  email: email,
+                  email: cardholderEmail,
                   identification: {
                     type: identificationType,
                     number: identificationNumber,
@@ -208,7 +213,7 @@
                         },
                       ],
                     }, */
-                    },
+                  },
                 },
               }),
             })
