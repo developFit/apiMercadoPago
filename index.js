@@ -1,10 +1,11 @@
-const express = require('express')
-const paymentroutes = require('./routes/payment.routes.js')
-const app = express()
-const port = 3000
-const errorHandler = require('./middlewares/errorHandler');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const paymentroutes = require("./routes/payment.routes.js");
+const errorHandler = require("./middlewares/errorHandler");
 
+const PORT = process.env.PORT;
+const app = express();
 
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
@@ -21,8 +22,6 @@ app.use(express.json());
 //defines all routes
 app.use(paymentroutes);
 
-
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});

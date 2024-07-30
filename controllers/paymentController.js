@@ -1,16 +1,14 @@
-// import { Payment, MercadoPagoConfig } from "mercadopago";
-// import { MERCADOPAGO_ACCESS_TOKEN } from "../config.js";
-const mercadopago = require('mercadopago');
+const mercadopago = require("mercadopago");
+const paymentService = require("../services/paymentService");
+
+const MERCADOPAGO_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN;
 const PaymentMP = mercadopago.Payment;
 const MercadoPagoConfig = mercadopago.MercadoPagoConfig;
 
 const client = new MercadoPagoConfig({
-  accessToken:
-    "TEST-4632705797816674-070515-961081a93d3f9a171d24011d08424bd8-628501586"
+  accessToken: MERCADOPAGO_ACCESS_TOKEN,
 });
 const paymentsMP = new PaymentMP(client);
-
-const paymentService = require("../services/paymentService");
 
 exports.createPayments = async (req, res, next) => {
   try {
