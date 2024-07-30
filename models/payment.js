@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Payment.init({
+    userId: DataTypes.STRING,
     mercadopagoId: DataTypes.STRING,
     status: DataTypes.STRING,
     total: DataTypes.DECIMAL

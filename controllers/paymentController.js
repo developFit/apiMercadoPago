@@ -43,50 +43,37 @@ exports.getPaymentById = async (req, res, next) => {
 exports.createOrder = async (req, res, next) => {
   const {
     token,
-    transactionAmount,
+    transaction_amount,
     installments,
-    paymentMethodId,
-    email,
-    identificationType,
-    identificationNumber,
-    issuer,
+    payment_method_id,
+    issuer_id,
+    payer: { email, identification_type, identification_number },
+    userId,
   } = req.body;
 
   try {
     const result = await paymentsMP.create({
       body: {
         token,
-        transaction_amount: 101,
-        installments: installments,
-        payment_method_id: paymentMethodId,
-        issuer: issuer,
+        transaction_amount,
+        installments,
+        payment_method_id,
+        issuer_id,
         payer: {
-          email: "jhon@doe.com",
-          identification: {
-            type: identificationType,
-            number: identificationNumber,
-            /* additional_info: {
-              items: [
-                {
-                  title,
-                  description,
-                  quantity,
-                  unitPrice,
-                },
-              ],
-            }, */
-          },
+          email,
+          identification_type,
+          identification_number,
         },
       },
     });
 
-    console.log("Payment Result:", result);
-    const pay = { body: {
-      mercadopagoId: result.id, 
-      status: result.status,
-      total: result.installment_amount
-    }
-
+    const pay = {
+      body: {
+        userId: userId,
+        mercadopagoId: result.id,
+        status: result.status,
+        total: result.transaction_amount,
+      },
     };
     const paymentDB = await paymentService.createPayments(pay);
     res.status(200).json(paymentDB);
@@ -94,5 +81,4 @@ exports.createOrder = async (req, res, next) => {
     console.log("Payment Error:", error);
     res.status(500).json({ error: error.message });
   }
-  // return res.send('s');
 };

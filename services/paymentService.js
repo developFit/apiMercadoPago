@@ -2,8 +2,9 @@ const Payment = require('../models').Payment;
 // const models = require('../models/index');
 
 exports.createPayments = async (req) => {
-    const {mercadopagoId, status, total} = req.body
+    const {userId, mercadopagoId, status, total} = req.body
     return await Payment.create({
+        userId: userId,
         mercadopagoId: mercadopagoId,
         status: status,
         total: total
