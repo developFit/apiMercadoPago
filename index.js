@@ -4,7 +4,7 @@ const cors = require("cors");
 const paymentroutes = require("./routes/payment.routes.js");
 const errorHandler = require("./middlewares/errorHandler");
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT  || 3000;;
 const app = express();
 
 // app.get('/', (req, res) => {
