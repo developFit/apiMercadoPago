@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MP - Checkout API</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+  </head>
+  <body>
+    <form id="paymentForm">
+      <input type="text" id="userId" placeholder="User ID" />
+      <hr />
+      <input type="text" id="cardNumber" placeholder="Card Number" />
+      <input type="text" id="cardExpirationDate" placeholder="MM/YY" />
+      <input type="text" id="cardholderName" placeholder="Cardholder Name" />
+      <input type="text" id="securityCode" placeholder="Security Code" />
+      <hr />
+      <input type="email" id="email" placeholder="email" />
+      <input
+        type="text"
+        id="identificationType"
+        placeholder="Identification Type (e.g., DNI)"
+      />
+      <input
+        type="text"
+        id="identificationNumber"
+        placeholder="Identification Number"
+      />
+      <select id="paymentMethodId">
+        <option value="master">Master Card</option>
+        <option value="visa">Visa</option>
+        <option value="amex">American Express</option>
+      </select>
+      <select id="issuer"></select>
+      <select id="installments"></select>
+      <hr />
+      <button type="submit">Pay</button>
+    </form>
+
+    <script>
+      const mp = new MercadoPago("TEST-d1a350ec-d71b-4395-9071-f4ed0b7ac15f");
+
+      const cardForm = mp.cardForm({
+        amount: "100.00",
+        autoMount: true,
+        form: {
+          id: "paymentForm",
+          cardNumber: { id: "cardNumber" },
+          expirationDate: { id: "cardExpirationDate" },
+          cardholderName: { id: "cardholderName" },
+          securityCode: { id: "securityCode" },
+          cardholderEmail: { id: "email" },
+          identificationType: { id: "identificationType" },
+          identificationNumber: { id: "identificationNumber" },
+          paymentMethodId: { id: "paymentMethodId" },
+          issuer: { id: "issuer" },
+          installments: { id: "installments" },
+          userId: { id: "userId" },
+        },
+        callbacks: {
+          onFormMounted: (error) => {
+            if (error)
+              return console.warn("Form Mounted handling error: ", error);
+            console.log("Form mounted");
+          },
+          onSubmit: (event) => {
+            event.preventDefault();
+            const {
+              token,
+              amount,
+              installments,
+              paymentMethodId,
+              cardholderEmail,
+              identificationType,
+              identificationNumber,
+              issuerId,
+            } = cardForm.getCardFormData();
+
+            const userId = document.getElementById("userId").value;
+
+            fetch("http://localhost:3000/create-order", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                token,
+                transaction_amount: Number(amount),
+                installments: Number(installments) || 1,
+                payment_method_id: paymentMethodId,
+                issuer_id: issuerId,
+                payer: {
+                  email: cardholderEmail,
+                  identification: {
+                    type: identificationType,
+                    number: identificationNumber,
+                  },
+                },
+                userId,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => console.log("Payment Result:", data))
+              .catch((error) => console.error("Error:", error));
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
